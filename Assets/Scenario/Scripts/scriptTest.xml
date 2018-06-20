@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SCRIPT>
+  
+  <SCENE id="scene1">
+    <SPRITE id="bg" layer="1" scale="0.656" src="scenario/textures/demoVersion/menu/background.png"/>
+    <MUSIC id="main" volume="3" loop="true" src="scenario/music/main.ogg"/>
+  </SCENE>
+
+  <SCENE id="scene2">
+    <SPRITE id="bread" layer="0"  x="500" y="-50" src="scenario/textures/demoVersion/breadnorm.png"/>
+    <SOUND id="botbeep" volume="20" src="scenario/sounds/bot_tell_1.ogg"/>
+  </SCENE>
+
+  <SCENE id="scene3">
+    <SPRITE id="bg" layer="-10" scale="0.7" src="scenario/textures/demoVersion/background_3.png"/>
+    <MUSIC id="main" command="stop"/>
+    <SOUND id="bg"/>
+  </SCENE>
+  
+  <SCENE id="scene4">
+    <GOPA id="gopa" />
+  </SCENE>
+  
+</SCRIPT>
