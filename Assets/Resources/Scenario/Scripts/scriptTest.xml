@@ -11,21 +11,29 @@
       <TEXT id="Второй текст в первом event сцены 'scene1'"></TEXT>-->
     </EVENT>
     <EVENT>
-      <SPRITE id="sprite1_3" layer ="3"/>
+      <SPRITE id="sprite1_2" visible="false"/>
       <!--<TEXT id="Текст во втором event сцены 'scene1'"></TEXT>-->
+    </EVENT>
+    <EVENT>
+      <SPRITE id="sprite1_1" angle="-20"/>
     </EVENT>
   </SCENE>
 
   <SCENE id="scene2">
-    <SPRITE id="sprite2" src="scenario/textures/demoVersion/background_3.png"/>
+    <SPRITE id="sprite1_1" layer ="1" src="logo/back"/>
+    <SPRITE id="sprite1_2" layer ="2" src="logo/logo"/>
+    <SPRITE id="sprite1_3" layer ="3" y ="-0.77" src="logo/name"/>
     <EVENT>
+      <SPRITE id="sprite1_2" scale="1.1"/>
       <TEXT id="Текст в первом event сцены 'scene2'"></TEXT>
     </EVENT>
   </SCENE>
 
   <SCENE id="scene3">
-    <SPRITE id="sprite3" src="scenario/textures/demoVersion/background_3.png"/>
+    <SPRITE id="sprite1_1" layer ="1" src="scene2/back"/>
+    <SPRITE id="sprite1_2" layer ="2" x="2.36" y="-0.73" src="scene2/girl1"/>
     <EVENT> <!-- EVENT должен быть после прогрузок. Всегда! -->
+      <SPRITE id="sprite1_2" src="scene2/girl2"/>
       <TEXT id="Текст в первом event сцены 'scene3'"></TEXT>
       <TEXT id="Второй текст в первом event сцены 'scene3'"></TEXT>
     </EVENT>
@@ -33,6 +41,7 @@
       <TEXT id="Текст во втором event сцены 'scene3'"></TEXT>
     </EVENT>
     <EVENT>
+      <SPRITE id="sprite1_2" src="scene2/girl1"/>
       <TEXT id="Текст в третьем event сцены 'scene3'"></TEXT>
     </EVENT>
   </SCENE>
@@ -43,6 +52,8 @@
   </SCENE>
 
   <SCENE id="scene5">
+    <SPRITE id="sprite1_1" layer ="1" src="scene3/back"/>
+    <SPRITE id="sprite1_2" layer ="2" src="scene3/girl"/>
     <VIDEO id="video2"/>
   </SCENE>
   

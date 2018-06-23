@@ -8,6 +8,7 @@ namespace ng
     public class CXmlReader : MonoBehaviour
     {
         public Transform sceneParent;
+        private Transform canvastr;
         Scene scene;
         XmlNode currentNode;
         XmlDocument xmlDoc;
@@ -41,7 +42,8 @@ namespace ng
                 if (currentNode.Name == "SCENE")
                 {
                     scene = new Scene();
-                    foreach (Transform t in sceneParent)
+                    canvastr = sceneParent.GetComponentInChildren<Canvas>().gameObject.transform;
+                    foreach (Transform t in canvastr)
                     {
                         //if (t != sceneParent) // Если Scene закинули в Scene (случайно)
                         Destroy(t.gameObject);

@@ -20,14 +20,14 @@ namespace ng
         public static ResData GetData(XmlNode node)
         {
             XmlAttribute id = node.Attributes["id"];
-            //XmlAttribute x = node.Attributes["x"];
-            //XmlAttribute y = node.Attributes["y"];
+            XmlAttribute x = node.Attributes["x"];
+            XmlAttribute y = node.Attributes["y"];
             //XmlAttribute layermotion = node.Attributes["layermotion"];
-            //XmlAttribute scale = node.Attributes["scale"];
-            //XmlAttribute angle = node.Attributes["angle"];
+            XmlAttribute scale = node.Attributes["scale"];
+            XmlAttribute angle = node.Attributes["angle"];
             XmlAttribute layer = node.Attributes["layer"];
             //XmlAttribute style = node.Attributes["style"];
-            //XmlAttribute visible = node.Attributes["visible"];
+            XmlAttribute visible = node.Attributes["visible"];
             //XmlAttribute alpha = node.Attributes["alpha"];
             XmlAttribute src = node.Attributes["src"];
             //XmlAttribute smooth = node.Attributes["smooth"];
@@ -53,14 +53,14 @@ namespace ng
             };
 
             if (id != null) { res.id = id.Value; res.bitMask = res.bitMask | (1 << 17); } else res.id = "null";
-            //if (x != null) { res.x = float.Parse(x.Value); res.bitMask = res.bitMask | (1 << 7); } else res.x = 0;
-            //if (y != null) { res.y = float.Parse(y.Value); res.bitMask = res.bitMask | (1 << 8); } else res.y = 0;
+            if (x != null) { res.x = float.Parse(x.Value); res.bitMask = res.bitMask | (1 << 7); } else res.x = 0;
+            if (y != null) { res.y = float.Parse(y.Value); res.bitMask = res.bitMask | (1 << 8); } else res.y = 0;
             //if (layermotion != null) { res.layermotion = Convtrue(layermotion.Value); res.bitMask = res.bitMask | (1 << 16); } else res.layermotion = true;
-            //if (scale != null) { res.scale = float.Parse(scale.Value); res.bitMask = res.bitMask | (1 << 9); } else res.scale = 1;
-            //if (angle != null) { res.angle = float.Parse(angle.Value); res.bitMask = res.bitMask | (1 << 10); } else res.angle = 0;
+            if (scale != null) { res.scale = float.Parse(scale.Value) * 112.585f; res.bitMask = res.bitMask | (1 << 9); } else res.scale = 112.585f;
+            if (angle != null) { res.angle = float.Parse(angle.Value); res.bitMask = res.bitMask | (1 << 10); } else res.angle = 0;
             if (layer != null) { res.layer = int.Parse(layer.Value) * Constants.LayerDivision; res.bitMask = res.bitMask | (1 << 1); } else res.layer = 0;
             //if (style != null) { res.style = style.Value; res.bitMask = res.bitMask | (1 << 20); } else res.style = "null";
-            //if (visible != null) { res.visible = Convtrue(visible.Value); res.bitMask = res.bitMask | (1 << 15); } else res.visible = true;
+            if (visible != null) { res.visible = Convtrue(visible.Value); res.bitMask = res.bitMask | (1 << 15); } else res.visible = true;
             //if (alpha != null) { res.alpha = 255 * int.Parse(alpha.Value) / 100; res.bitMask = res.bitMask | (1 << 4); } else res.alpha = 255; // [!]
             if (src != null) { res.src = src.Value; res.bitMask = res.bitMask | (1 << 18); } else res.src = "null";
             //if (smooth != null) { res.smooth = Convtrue(smooth.Value); res.bitMask = res.bitMask | (1 << 14); } else res.smooth = true;

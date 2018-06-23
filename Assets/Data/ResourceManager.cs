@@ -16,7 +16,7 @@ namespace ng
             Instance = this;
         }
 
-        public static GameObject GetUpgradePrefab(string name)
+        public static GameObject GetPrefab(string name)
         {
             return Get(name + " (UnityEngine.GameObject)", Instance.prefabs); // Важно
         }
