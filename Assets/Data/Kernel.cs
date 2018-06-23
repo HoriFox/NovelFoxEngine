@@ -192,6 +192,8 @@ namespace ng
 
     public class Kernel : MonoBehaviour
     {
+        // Версия движка.
+        public string version;
         // Ширина и высота монитора разработчика.
         public int devMonitorWidth;
         public int devMonitorHeight;
