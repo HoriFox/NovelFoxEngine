@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using System.Xml;
 
 namespace ng
@@ -8,7 +6,7 @@ namespace ng
     public class CXmlReader : MonoBehaviour
     {
         public Transform sceneParent;
-        private Transform canvastr;
+        private Transform m_canvastr;
         Scene scene;
         XmlNode currentNode;
         XmlDocument xmlDoc;
@@ -39,44 +37,55 @@ namespace ng
         {
             if (currentNode != null)
             {
-                if (currentNode.Name == "SCENE")
-                {
-                    scene = new Scene();
-                    canvastr = sceneParent.GetComponentInChildren<Canvas>().gameObject.transform;
-                    foreach (Transform t in canvastr)
-                    {
-                        //if (t != sceneParent) // Если Scene закинули в Scene (случайно)
-                        Destroy(t.gameObject);
-                    }
-                    string line = "============================================================================";
-                    Debug.Log("<b>" + line + " Пересоздаём Scene [" + currentNode.Attributes["id"].Value + "]</b>");
-                }
+                ReloadScene();
                 LoadNode(currentNode);
-                if (currentNode.SelectSingleNode("EVENT") != null)
+                if (currentNode.SelectSingleNode("EVENT") != null)          // Если эта нода имеет первый ненулевой EVENT // [УБРАТЬ КОММЕНТАРИЙ]
                 {
                     currentNode = currentNode.SelectSingleNode("EVENT");
                 }
-                else
+                else                                                        // Иначе, мы находимся в самом EVENT или EVENT нет // [УБРАТЬ КОММЕНТАРИЙ]
                 {
-                    if (currentNode.NextSibling != null)
+                    if (currentNode.NextSibling != null)                    // Если следующая нода ненулевая, если мы в EVENT // [УБРАТЬ КОММЕНТАРИЙ]
                     {
                         currentNode = currentNode.NextSibling;
                     }
-                    else 
-                    if (currentNode.Name == "EVENT")
+                    else                                                    // Следующая нода нулевая // [УБРАТЬ КОММЕНТАРИЙ]
                     {
-                        currentNode = currentNode.ParentNode;
-                        if (currentNode.NextSibling != null)
+                        if (currentNode.Name == "EVENT")                    // Если мы в EVENT // [УБРАТЬ КОММЕНТАРИЙ]
                         {
-                            currentNode = currentNode.NextSibling;
+                            currentNode = currentNode.ParentNode;
+                            if (currentNode.NextSibling != null)
+                            {
+                                currentNode = currentNode.NextSibling;
+                            }
+                        }
+                        else                                                // Если это SCENE // [УБРАТЬ КОММЕНТАРИЙ]
+                        {
+                            currentNode = null;
+                            Debug.Log("Конец сценария");
                         }
                     }
-                    else
-                    {
-                        currentNode = null;
-                        Debug.Log("Конец сценария");
-                    }
                 }
+                bool boolJump = SearchJump(currentNode);
+                if (boolJump)                                               // Есть ли JUMP // [УБРАТЬ КОММЕНТАРИЙ]
+                {
+                    Jump(currentNode.SelectSingleNode("JUMP"));
+                }
+            }
+        }
+        // Пересоздание сцены.
+        public void ReloadScene()
+        {
+            if (currentNode.Name == "SCENE")
+            {
+                scene = new Scene();
+                m_canvastr = sceneParent.GetComponentInChildren<Canvas>().gameObject.transform;
+                foreach (Transform t in m_canvastr)
+                {
+                    Destroy(t.gameObject);
+                }
+                string line = "============================================================================";
+                Debug.Log("<b>" + line + " Пересоздаём Scene [" + currentNode.Attributes["id"].Value + "]</b>");
             }
         }
         // Контроль логики переключений. Вероятно, не нужно, убрать! [TO DO]
@@ -90,22 +99,69 @@ namespace ng
         // Воздействия со стороны пользователя. Убрать Key, если нагрузка! [TO DO] 
         public int OnInputEvent()
         { 
-            if (Key(KeyCode.Mouse0) || Key(KeyCode.Return) || Key(KeyCode.Space)) return 1;
+            if (CheckKey(KeyCode.Mouse0) || CheckKey(KeyCode.Return) || CheckKey(KeyCode.Space)) return 1;
             return 0;
         }
         // Упрощение GetKeyDown.
-        public bool Key(KeyCode code)
+        public bool CheckKey(KeyCode code)
         {
             return Input.GetKeyDown(code);
+        }
+        // Обрабатываем EVENT(if).
+        public void GetEventIF(XmlNode eventNode)
+        {
+            string var = eventNode.Attributes["var"].Value;
+            string operation = eventNode.Attributes["operation"].Value;
+            string value = eventNode.Attributes["value"].Value;
+        }
+        //  Обрабатываем EVENT(time).
+        public void GetEventTime(XmlNode eventNode)
+        {
+            float time = float.Parse(eventNode.Attributes["time"].Value);
+        }
+        // Функция поиска тэга JUMP.
+        public bool SearchJump(XmlNode jumpNode)
+        {
+            if (currentNode != null && currentNode.SelectSingleNode("JUMP") != null)
+            {
+                return true;
+            }
+            return false;
+        }
+        // Исполнение функции JUMP.
+        public void Jump(XmlNode jumpNode)
+        {
+            string toId = jumpNode.Attributes["id"].Value;
+            XmlNode node = jumpNode;
+
+            if (node.ParentNode.Name == "EVENT")
+            {
+                node = node.ParentNode;
+            }
+            if (node.ParentNode.Name == "SCENE")
+            {
+                node = node.ParentNode;
+            }
+
+            if (jumpNode.Attributes["to"].Value == "event")
+            {
+                currentNode = node.SelectSingleNode("EVENT[@id = '" + toId + "']");
+                return;
+            }
+            else
+            if (jumpNode.Attributes["to"].Value == "scene")
+            {
+                if (node.ParentNode.Name == "SCRIPT")
+                {
+                    node = node.ParentNode;
+                }
+                currentNode = node.SelectSingleNode("SCENE[@id = '" + toId + "']");
+            }
         }
         // Загрузка и создание объектов по ноде.
         public void LoadNode(XmlNode node)
         {
-            if (node == null)
-            {
-                goto NullNode;
-            }
-            else
+            if (node != null)
             {
                 foreach (XmlNode childnode in node.ChildNodes) // Сделать отдельные классы [TO DO]
                 {
@@ -121,11 +177,11 @@ namespace ng
                             else
                             {
                                 Debug.Log(string.Format("<b>Создаю объект <color=teal>спрайта</color></b> ({0}, {1})", data.id, data.src));
-                                scene.CreateObject(1, data, sceneParent);
+                                scene.CreateObject(1, data, m_canvastr);
                                 continue;
                             }
                             break;
-                        /*case "ANIMATESPRITE":
+                        case "ANIMATESPRITE":
                             if (scene.objects.ContainsKey(data.id))
                             {
                                 Debug.Log("Изменяем ANIMATESPRITE");
@@ -134,10 +190,10 @@ namespace ng
                             else
                             {
                                 Debug.Log("<b>Создаю объект <color=teal>анимированного спрайта</color> " + data.id + "</b>");
-                                scene.CreateObject(2, data, sceneParent);
+                                scene.CreateObject(2, data, m_canvastr);
                                 continue;
                             }
-                            break;*/
+                            break;
                         case "VIDEO":
                             if (scene.objects.ContainsKey(data.id))
                             {
@@ -147,7 +203,7 @@ namespace ng
                             else
                             {
                                 Debug.Log("<b>Создаю объект <color=teal>видео</color> " + data.id + "</b>");
-                                scene.CreateObject(3, data, sceneParent);
+                                scene.CreateObject(3, data, m_canvastr);
                                 continue;
                             }
                             break;
@@ -160,7 +216,7 @@ namespace ng
                             else
                             {
                                 Debug.Log("<b>Создаю объект <color=teal>текста</color> " + data.id + "</b>");
-                                scene.CreateObject(4, data, sceneParent);
+                                scene.CreateObject(4, data, m_canvastr);
                                 continue;
                             }
                             break;
@@ -193,8 +249,6 @@ namespace ng
                     }
                 }
             }
-            NullNode:
-                Debug.Log("Нода отсутствует");
         }
     }
 }

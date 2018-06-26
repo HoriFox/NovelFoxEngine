@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SCRIPT>
+
+  <SCENE id="scene0">
+    
+    <SPRITE id="sprite1_1" layer ="1" src="demoScene/1"/>
+    
+    <EVENT id="0">
+    </EVENT>
+
+    <EVENT id="1">
+    </EVENT>
+    
+    <EVENT id="2">
+      <JUMP to="scene" id ="scene0"/>
+    </EVENT>
+    
+  </SCENE>
   
   <SCENE id="scene1">
     <SPRITE id="sprite1_1" layer ="1" src="demoScene/1"/>
@@ -11,7 +27,7 @@
       <TEXT id="Второй текст в первом event сцены 'scene1'"></TEXT>-->
     </EVENT>
     <EVENT>
-      <SPRITE id="sprite1_2" visible="false"/>
+      <SPRITE id="sprite1_2" src="scene2/girl1"/>
       <!--<TEXT id="Текст во втором event сцены 'scene1'"></TEXT>-->
     </EVENT>
     <EVENT>
