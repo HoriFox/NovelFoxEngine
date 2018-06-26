@@ -1,37 +1,18 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SCRIPT>
 
-  <SCENE id="scene0">
-    
-    <SPRITE id="sprite1_1" layer ="1" src="demoScene/1"/>
-    
-    <EVENT id="0">
-    </EVENT>
-
-    <EVENT id="1">
-    </EVENT>
-    
-    <EVENT id="2">
-      <JUMP to="scene" id ="scene0"/>
-    </EVENT>
-    
-  </SCENE>
-  
   <SCENE id="scene1">
     <SPRITE id="sprite1_1" layer ="1" src="demoScene/1"/>
     <SPRITE id="sprite1_2" layer ="2" src="demoScene/2"/>
     <SPRITE id="sprite1_3" layer ="3" src="demoScene/3"/>
     <EVENT>
       <SPRITE id="sprite1_3" layer ="2"/>
-      <!--<TEXT id="Текст в первом event сцены 'scene1'"></TEXT>
-      <TEXT id="Второй текст в первом event сцены 'scene1'"></TEXT>-->
     </EVENT>
     <EVENT>
       <SPRITE id="sprite1_2" src="scene2/girl1"/>
-      <!--<TEXT id="Текст во втором event сцены 'scene1'"></TEXT>-->
     </EVENT>
     <EVENT>
-      <SPRITE id="sprite1_1" angle="-20"/>
+      <!--  <JUMP to="scene" id ="scene2"/> -->
     </EVENT>
   </SCENE>
 
@@ -72,5 +53,5 @@
     <SPRITE id="sprite1_2" layer ="2" src="scene3/girl"/>
     <VIDEO id="video2"/>
   </SCENE>
-  
+
 </SCRIPT>

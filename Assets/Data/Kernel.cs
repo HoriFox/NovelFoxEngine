@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace ng
@@ -56,11 +57,13 @@ namespace ng
         // Переменные полос.
         private Band m_bandLT;
         private Band m_bandRB;
+        // Хэш-словарь.
+        public Dictionary<string, string> objects;
 
         void Start ()
         {
             cameraObject.GetComponent<Camera>().backgroundColor = backgroundColor;
-            GetComponent<CXmlReader>().ReadXMLFile("scriptTest");
+            GetComponent<CXmlLoader>().ReadXMLFile("scriptTest");
 
             GameObject.Find("NGBandRightBottom").GetComponent<Image>().color = bandsColor;
             GameObject.Find("NGBandLeftTop").GetComponent<Image>().color = bandsColor;

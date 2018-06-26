@@ -9,15 +9,15 @@ namespace ng
     {
         public static bool GetBit(uint x, int pos)
         {
-            return (((x) & (1 << (pos))) != 0 ? true : false);
+            return (((x) & (1 << (pos))) != 0);
         }
 
         public static bool Convtrue(string str)
         {
-            return (string.Compare(str, "true", true) == 0 ? true : false);
+            return (string.Compare(str, "true", true) == 0);
         }
 
-        public static ResData GetData(XmlNode node)
+        public static ResData GetData(XmlNode node) // Сериализатор! TODO
         {
             XmlAttribute id = node.Attributes["id"];
             XmlAttribute x = node.Attributes["x"];

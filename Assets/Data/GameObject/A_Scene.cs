@@ -10,10 +10,10 @@ namespace ng
 
     public class Scene // Перенести создание в Scene
     {
-        public int orderLayer = 0;                                      // Позиция в порядке слоёв
-        public SortedDictionary<string, IDisplayable> objects;          // Dictionary с объектами
-        //public SortedDictionary<string, Sound> sounds;                // Dictionary с звуков
-        //public SortedDictionary<string, Music> musics;                // Dictionary с музыкой
+        public int orderLayer = 0;                                // Позиция в порядке слоёв
+        public Dictionary<string, IDisplayable> objects;          // Dictionary с объектами
+        //public Dictionary<string, Sound> sounds;                // Dictionary с звуков
+        //public Dictionary<string, Music> musics;                // Dictionary с музыкой
 
         public void CreateObject(int type, ResData data, Transform canvastr)
         {
@@ -44,7 +44,7 @@ namespace ng
 
         public Scene()
         {
-            objects = new SortedDictionary<string, IDisplayable>();
+            objects = new Dictionary<string, IDisplayable>();
             /*sounds = new SortedDictionary<string, Sound>();
             musics = new SortedDictionary<string, Music>();*/
         }
