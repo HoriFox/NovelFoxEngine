@@ -2,9 +2,9 @@
 <SCRIPT>
 
   <SCENE id="scene1">
-    <SPRITE id="sprite1_1" x = "10" layer ="1" src="demoScene/1"/>
+    <SPRITE id="sprite1_1" layer ="1" src="demoScene/1"/>
     <SPRITE id="sprite1_2" layer ="2" src="demoScene/2"/>
-    <SPRITE id="sprite1_3" x = "10" layer ="3" src="demoScene/3"/>
+    <SPRITE id="sprite1_3" layer ="3" src="demoScene/3"/>
     <EVENT>
       <SPRITE id="sprite1_3" layer ="2"/>
     </EVENT>
@@ -53,7 +53,5 @@
     <SPRITE id="sprite1_2" layer ="2" src="scene3/girl"/>
     <VIDEO id="video2"/>
   </SCENE>
-
-
 
 </SCRIPT>

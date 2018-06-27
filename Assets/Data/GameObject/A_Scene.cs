@@ -18,20 +18,20 @@ namespace ng
         public void CreateObject(int type, Data data, Transform canvastr)
         {
             orderLayer += 1;
-            data.Layer += orderLayer;
+            data.layer += orderLayer;
             switch (type)
             {
                 case 1:
-                    objects[data.Id] = new Sprite(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
+                    objects[data.id] = new Sprite(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
                     break;
                 case 2:
-                    objects[data.Id] = new AnimateSprite(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
+                    objects[data.id] = new AnimateSprite(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
                     break;
                 case 3:
-                    objects[data.Id] = new Video(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
+                    objects[data.id] = new Video(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
                     break;
                 case 4:
-                    objects[data.Id] = new Text(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
+                    objects[data.id] = new Text(data, ResourceManager.GetPrefab("spritePrefab"), canvastr);
                     break;
 
             }
@@ -39,7 +39,7 @@ namespace ng
 
         public void EditObject(Data data)
         {
-            objects[data.Id].Edit(data);
+            objects[data.id].Edit(data);
         }
 
         public Scene()

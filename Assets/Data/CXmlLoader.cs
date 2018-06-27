@@ -124,11 +124,11 @@ namespace ng
         public void EventController()
         {
             // Для проверки скорости проработки скрипта - отключить условие.
-            //if (OnInputEvent() == 1 )
-            //{
+            if (OnInputEvent() == 1 )
+            {
                 LogicTransitions();
                 UpdateScene();
-            //}
+            }
         }
         // Воздействия со стороны пользователя. Убрать Key, если нагрузка! [TO DO] 
         public int OnInputEvent()
@@ -223,59 +223,60 @@ namespace ng
                         ElementName = childnode.Name,
                         IsNullable = true
                     };
-                    XmlSerializer formatter = new XmlSerializer(typeof(Data), xRoot);
-                    Data data = (Data)formatter.Deserialize(new XmlNodeReader(childnode));
+                    XmlSerializer formatter = new XmlSerializer(typeof(XmlData), xRoot);
+                    XmlData xmlData = (XmlData)formatter.Deserialize(new XmlNodeReader(childnode));
+                    Data data = new Data(xmlData);
 
                     switch (childnode.Name)
                     {
                         case "SPRITE":
-                            if (m_scene.objects.ContainsKey(data.Id))
+                            if (m_scene.objects.ContainsKey(data.id))
                             {
                                 Debug.Log("Изменяем SPRITE");
                                 m_scene.EditObject(data);
                             }
                             else
                             {
-                                Debug.Log(string.Format("<b>Создаю объект <color=teal>спрайта</color></b> ({0}, {1})", data.Id, data.Src));
+                                Debug.Log(string.Format("<b>Создаю объект <color=teal>спрайта</color></b> ({0}, {1})", data.id, data.src));
                                 m_scene.CreateObject(1, data, m_canvastr);
                                 continue;
                             }
                             break;
                         case "ANIMATESPRITE":
-                            if (m_scene.objects.ContainsKey(data.Id))
+                            if (m_scene.objects.ContainsKey(data.id))
                             {
                                 Debug.Log("Изменяем ANIMATESPRITE");
-                                m_scene.objects[data.Id].Edit(data);
+                                m_scene.objects[data.id].Edit(data);
                             }
                             else
                             {
-                                Debug.Log("<b>Создаю объект <color=teal>анимированного спрайта</color> " + data.Id + "</b>");
+                                Debug.Log("<b>Создаю объект <color=teal>анимированного спрайта</color> " + data.id + "</b>");
                                 m_scene.CreateObject(2, data, m_canvastr);
                                 continue;
                             }
                             break;
                         case "VIDEO":
-                            if (m_scene.objects.ContainsKey(data.Id))
+                            if (m_scene.objects.ContainsKey(data.id))
                             {
                                 Debug.Log("Изменяем VIDEO");
                                 m_scene.EditObject(data);
                             }
                             else
                             {
-                                Debug.Log("<b>Создаю объект <color=teal>видео</color> " + data.Id + "</b>");
+                                Debug.Log("<b>Создаю объект <color=teal>видео</color> " + data.id + "</b>");
                                 m_scene.CreateObject(3, data, m_canvastr);
                                 continue;
                             }
                             break;
                         case "TEXT":
-                            if (m_scene.objects.ContainsKey(data.Id))
+                            if (m_scene.objects.ContainsKey(data.id))
                             {
                                 Debug.Log("Изменяем TEXT");
                                 m_scene.EditObject(data);
                             }
                             else
                             {
-                                Debug.Log("<b>Создаю объект <color=teal>текста</color> " + data.Id + "</b>");
+                                Debug.Log("<b>Создаю объект <color=teal>текста</color> " + data.id + "</b>");
                                 m_scene.CreateObject(4, data, m_canvastr);
                                 continue;
                             }

@@ -9,58 +9,58 @@ namespace ng
         public void Edit(Data data)
         {
             // Слой.
-            if (DataObject.GetBit(data.m_bitMask, 1))
+            if (DataObject.GetBit(data.bitMask, (int)OA.layer))
             {
-                m_sr.sortingOrder = data.Layer;
+                m_sr.sortingOrder = data.layer;
             }
             // X позиция.
-            if (DataObject.GetBit(data.m_bitMask, 7))
+            if (DataObject.GetBit(data.bitMask, (int)OA.x))
             {
-                m_tr.position = new Vector3(data.X, m_tr.position.y);
+                m_tr.position = new Vector3(data.x, m_tr.position.y);
             }
             // Y позиция.
-            if (DataObject.GetBit(data.m_bitMask, 8))
+            if (DataObject.GetBit(data.bitMask, (int)OA.y))
             {
-                m_tr.position = new Vector3(m_tr.position.x, data.Y);
+                m_tr.position = new Vector3(m_tr.position.x, data.y);
             }
             // Видимость.
-            if (DataObject.GetBit(data.m_bitMask, 15))
+            if (DataObject.GetBit(data.bitMask, (int)OA.visible))
             {
-                objectSprite.SetActive(data.Visible);
+                objectSprite.SetActive(data.visible);
             }
             // Размер.
-            if (DataObject.GetBit(data.m_bitMask, 9))
+            if (DataObject.GetBit(data.bitMask, (int)OA.scale))
             {
-                m_tr.localScale = new Vector3(data.Scale, data.Scale);
+                m_tr.localScale = new Vector3(data.scale, data.scale);
             }
             // src.
-            if (DataObject.GetBit(data.m_bitMask, 18))
+            if (DataObject.GetBit(data.bitMask, (int)OA.src))
             {
-                m_sr.sprite = Resources.Load<UnityEngine.Sprite>("Scenario/Textures/" + data.Src);
+                m_sr.sprite = Resources.Load<UnityEngine.Sprite>("Scenario/Textures/" + data.src);
                 // Изменение collider-а под нужное src.
                 m_boundSide = objectSprite.GetComponent<SpriteRenderer>().bounds.size;
                 m_colliderBox.size = m_boundSide;
             }
             // Угол поворота.
-            if (DataObject.GetBit(data.m_bitMask, 10))
+            if (DataObject.GetBit(data.bitMask, (int)OA.angle))
             {
-                m_tr.rotation = Quaternion.AngleAxis(data.Angle, new Vector3(0f, 0f, 1f));
+                m_tr.rotation = Quaternion.AngleAxis(data.angle, new Vector3(0f, 0f, 1f));
             }
         }
         public Sprite(Data data, GameObject pre, Transform canvastr)
         {
             objectSprite = GameObject.Instantiate(pre, canvastr);
-            objectSprite.name = data.Id;
-            objectSprite.SetActive(data.Visible);
+            objectSprite.name = data.id;
+            objectSprite.SetActive(data.visible);
 
             m_tr = objectSprite.GetComponent<Transform>();
-            m_tr.position = new Vector3(data.X, data.Y);
-            m_tr.localScale = new Vector3(data.Scale, data.Scale);
-            m_tr.rotation = Quaternion.AngleAxis(data.Angle, new Vector3(0f, 0f, 1f));
+            m_tr.position = new Vector3(data.x, data.y);
+            m_tr.localScale = new Vector3(data.scale, data.scale);
+            m_tr.rotation = Quaternion.AngleAxis(data.angle, new Vector3(0f, 0f, 1f));
 
             m_sr = objectSprite.GetComponent<SpriteRenderer>();
-            m_sr.sprite = Resources.Load<UnityEngine.Sprite>("Scenario/Textures/" + data.Src);
-            m_sr.sortingOrder = data.Layer;
+            m_sr.sprite = Resources.Load<UnityEngine.Sprite>("Scenario/Textures/" + data.src);
+            m_sr.sortingOrder = data.layer;
 
             // Быстрое "натягивание" collider-а на любой объект.
             m_boundSide = objectSprite.GetComponent<SpriteRenderer>().bounds.size;
