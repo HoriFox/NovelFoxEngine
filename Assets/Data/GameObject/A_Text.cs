@@ -4,10 +4,10 @@ namespace ng
 {
     public class Text : IDisplayable
     {
-        public void Edit(ResData data)
+        public void Edit(Data data)
         {
         }
-        public Text(ResData data, GameObject pre, Transform canvastr)
+        public Text(Data data, GameObject pre, Transform canvastr)
         {
         }
     };

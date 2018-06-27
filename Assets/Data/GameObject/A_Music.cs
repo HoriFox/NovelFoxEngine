@@ -6,10 +6,10 @@ namespace ng
 {
     public class Music
     {
-        public void Edit(ResData data)
+        public void Edit(Data data)
         {
         }
-        public Music(ResData data)
+        public Music(Data data)
         {
         }
     };

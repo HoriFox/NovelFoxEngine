@@ -4,10 +4,10 @@ namespace ng
 {
     public class Video : IDisplayable
     {
-        public void Edit(ResData data)
+        public void Edit(Data data)
         {
         }
-        public Video(ResData data, GameObject pre, Transform canvastr)
+        public Video(Data data, GameObject pre, Transform canvastr)
         {
         }
     };

@@ -11,7 +11,7 @@ namespace ng
         private float ratio;
 
         // Считаем и устанавливаем преимущество стороны width или height в resize-е.
-        public void ChangeNatchMode()
+        public void ChangeMatchMode()
         {
             ratioRef = kernel.devRect.x / kernel.devRect.y;
             //ratio = (float)Screen.width / (float)Screen.height;
