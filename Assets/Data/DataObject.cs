@@ -79,7 +79,7 @@ namespace ng
         public int width;
         public int height;
         public int alpha;
-        public int time;
+        public float time;
         public int size;
         public float x;
         public float y;
@@ -134,7 +134,7 @@ namespace ng
             else alpha = 255;
             if (xmld.Time != null)
             {
-                time = int.Parse(xmld.Time);
+                time = float.Parse(xmld.Time);
                 bitMask = bitMask | (1 << (int)OA.time);
             }
             else time = 1000;

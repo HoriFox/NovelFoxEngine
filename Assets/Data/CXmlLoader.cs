@@ -12,6 +12,10 @@ namespace ng
         private XmlNode m_currentNode;
         private XmlDocument m_xmlDoc;
         private XmlElement m_xmlRoot;
+        TimerPrefabScript timer;
+        Kernel kernel;
+        // Подходит ли нода для загрузки.
+        private bool m_nodeSuitable;
         //Загрузка и настройка xml файла.
         public void ReadXMLFile(string nameFile)
         {
@@ -23,9 +27,16 @@ namespace ng
             m_xmlDoc = new XmlDocument();
             m_xmlDoc.Load(reader);
             m_xmlRoot = m_xmlDoc.DocumentElement;
+            m_nodeSuitable = true;
 
             m_currentNode = m_xmlRoot.FirstChild;   // Быстрая логика.
             UpdateScene();                          // Обновление сцены.
+            CheckBlock();
+        }
+        public void Start()
+        {
+            timer = GameObject.Find("NGTimer").GetComponent<TimerPrefabScript>();
+            kernel = GameObject.Find("NGGame").GetComponent<Kernel>();
         }
         // Главное обновление.
         public void Update()
@@ -64,21 +75,22 @@ namespace ng
         // Логика переходов по сценарию.
         public void LogicTransitions()
         {
+            m_nodeSuitable = true;
             if (m_currentNode != null)
             {
-                if (m_currentNode.SelectSingleNode("EVENT") != null)          // Если эта нода имеет первый ненулевой EVENT // [УБРАТЬ КОММЕНТАРИЙ]
+                if (m_currentNode.SelectSingleNode("EVENT") != null)         
                 {
                     m_currentNode = m_currentNode.SelectSingleNode("EVENT");
                 }
-                else                                                        // Иначе, мы находимся в самом EVENT или EVENT нет // [УБРАТЬ КОММЕНТАРИЙ]
+                else                                                        
                 {
-                    if (m_currentNode.NextSibling != null)                    // Если следующая нода ненулевая, если мы в EVENT // [УБРАТЬ КОММЕНТАРИЙ]
+                    if (m_currentNode.NextSibling != null)                   
                     {
                         m_currentNode = m_currentNode.NextSibling;
                     }
-                    else                                                    // Следующая нода нулевая // [УБРАТЬ КОММЕНТАРИЙ]
+                    else                                                    
                     {
-                        if (m_currentNode.Name == "EVENT")                    // Если мы в EVENT // [УБРАТЬ КОММЕНТАРИЙ]
+                        if (m_currentNode.Name == "EVENT")                    
                         {
                             m_currentNode = m_currentNode.ParentNode;
                             if (m_currentNode.NextSibling != null)
@@ -86,37 +98,50 @@ namespace ng
                                 m_currentNode = m_currentNode.NextSibling;
                             }
                         }
-                        else                                                // Если это SCENE // [УБРАТЬ КОММЕНТАРИЙ]
+                        else                                               
                         {
                             m_currentNode = null;
                             Debug.Log("Конец сценария");
                         }
                     }
                 }
-                // Проверка ноды на наличие тэга JUMP.
-                bool boolJump = SearchJump(m_currentNode);
-                if (boolJump)                                               // Есть ли JUMP // [УБРАТЬ КОММЕНТАРИЙ]
-                {
-                    AddJump(m_currentNode.SelectSingleNode("JUMP"));
-                }
-                // Проверка ноды на наличие тэга CHOICE.
-                bool choiceJump = SearchChoice(m_currentNode);
-                if (choiceJump)
-                {
-                    AddChoice(m_currentNode.SelectSingleNode("CHOICE"));
-                }
-                // Проверка и установка IF расширения на EVENT.
-                bool boolEventIf = IsEventIF(m_currentNode);
-                if (boolEventIf)
-                {
-                    AddEventIF(m_currentNode);
-                }
-                // Проверка и установка TIME расширения на EVENT.
-                bool boolEventTime = IsEventTime(m_currentNode);
-                if (boolEventTime)
-                {
-                    AddEventTime(m_currentNode);
-                }
+                CheckBlock();
+            }
+        }
+
+        // Блок проверок на необычные ТЭГИ.
+        public void CheckBlock()
+        {
+            // Проверка ноды на наличие тэга VAR.
+            bool boolVar = SearchVar();
+            if (boolVar)
+            {
+                // Добавляем все существующие VAR-ы.
+                AddVars(m_currentNode);
+            }
+            // Проверка ноды на наличие тэга JUMP.
+            bool boolJump = SearchJump();
+            if (boolJump)
+            {
+                AddJump(m_currentNode.SelectSingleNode("JUMP"));
+            }
+            // Проверка ноды на наличие тэга CHOICE.
+            bool choiceJump = SearchChoice();
+            if (choiceJump)
+            {
+                AddChoice(m_currentNode.SelectSingleNode("CHOICE"));
+            }
+            // Проверка и установка IF расширения на EVENT.
+            bool boolEventIf = IsEventIF(m_currentNode);
+            if (boolEventIf)
+            {
+                AddEventIF(m_currentNode);
+            }
+            // Проверка и установка TIME расширения на EVENT.
+            bool boolEventTime = IsEventTime(m_currentNode);
+            if (boolEventTime)
+            {
+                AddEventTime(m_currentNode);
             }
         }
 
@@ -124,10 +149,15 @@ namespace ng
         public void EventController()
         {
             // Для проверки скорости проработки скрипта - отключить условие.
-            if (OnInputEvent() == 1 )
+            if (OnInputEvent() == 1 || timer.status == 1 || m_nodeSuitable == false)
             {
+                if (timer.status == 1 || timer.status == 2) timer.ResetTimer();
                 LogicTransitions();
-                UpdateScene();
+                // Если нода подходит для загрузки - загружаем.
+                if (m_nodeSuitable == true)
+                {
+                    UpdateScene();
+                }
             }
         }
         // Воздействия со стороны пользователя. Убрать Key, если нагрузка! [TO DO] 
@@ -142,42 +172,194 @@ namespace ng
         // ~~~~ Функции поиска и оповещения о нахождении нужного ТЭГА ~~~~
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        // Функция поиска тэга JUMP.
-        public bool SearchJump(XmlNode jumpNode)
+        // Функция поиска тэга VAR.
+        public bool SearchVar()
         {
-            return (m_currentNode != null && m_currentNode.SelectSingleNode("JUMP") != null);
+            if (m_currentNode != null)
+            {
+                return (m_currentNode.SelectSingleNode("VAR") != null);
+            }
+            return false;
+        }
+        // Функция поиска тэга JUMP.
+        public bool SearchJump()
+        {
+            if (m_currentNode != null)
+            {
+                return (m_currentNode.SelectSingleNode("JUMP") != null);
+            }
+            return false;
         }
         // Функция поиска тэга CHOICE.
-        public bool SearchChoice(XmlNode choiceNode)
+        public bool SearchChoice()
         {
-            return (m_currentNode != null && m_currentNode.SelectSingleNode("CHOICE") != null);
+            if (m_currentNode != null)
+            {
+                return (m_currentNode.SelectSingleNode("CHOICE") != null);
+            }
+            return false;
         }
         // Проверка на стандарт EVENT - IF
         public bool IsEventIF(XmlNode eventNode)
         {
-            return (eventNode != null && eventNode.Attributes["var"] != null);
+            if (eventNode != null)
+            {
+                return ((eventNode.Attributes["var"] != null  && eventNode.Attributes["value"] != null)
+                    || (eventNode.Attributes["var1"] != null && eventNode.Attributes["var2"] != null));
+            }
+            return false;
         }
         // Проверка на стандарт EVENT - TIME
         public bool IsEventTime(XmlNode eventNode)
         {
-            return (eventNode != null && eventNode.Attributes["time"] != null);
+            if (eventNode != null)
+            {
+                return (eventNode.Attributes["time"] != null);
+            }
+            return false;
         }
 
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         // ~~~~ Функции добавления нужный свойств по найденному ТЭГУ ~~~~~
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+        // Обрабатываем VAR-ы.
+        public void AddVars(XmlNode node)
+        {
+            XmlNodeList varsNodes;
+
+            varsNodes = node.SelectNodes("VAR");
+
+            foreach (XmlNode var in varsNodes)
+            {
+                AddOneVar(var);
+            }
+        }
+        // Обрабатываем один VAR.
+        public void AddOneVar(XmlNode nodeVar)
+        {
+            int value = 0;
+            XmlAttribute commandAtr = nodeVar.Attributes["command"];
+            XmlAttribute nameAtr = nodeVar.Attributes["name"];
+            XmlAttribute operationAtr = nodeVar.Attributes["operation"];
+            XmlAttribute valueAtr = nodeVar.Attributes["value"];
+            XmlAttribute varAtr = nodeVar.Attributes["var"];
+
+            if (commandAtr != null && nameAtr != null)
+            {
+                if (commandAtr.Value == "delete")
+                {
+                    kernel.var_hash.Remove(nameAtr.Value);
+                    return;
+                }
+            }
+
+            if (valueAtr != null)
+            {
+                value = int.Parse(valueAtr.Value);
+            }
+            else
+            if (varAtr != null)
+            {
+                if (kernel.var_hash.ContainsKey(varAtr.Value))
+                {
+                    value = kernel.var_hash[varAtr.Value];
+                }
+                else return;
+            }
+
+            if (nameAtr != null)
+            {
+                if (operationAtr == null)
+                {
+                    kernel.var_hash[nameAtr.Value] = value;
+                }
+                else
+                if (operationAtr.Value == "+")
+                {
+                    if (kernel.var_hash.ContainsKey(nameAtr.Value))
+                    {
+                        kernel.var_hash[nameAtr.Value] += value;
+                    }
+                    else
+                    {
+                        kernel.var_hash[nameAtr.Value] = value;
+                    }
+                }
+                else
+                if (operationAtr.Value == "-")
+                {
+                    if (kernel.var_hash.ContainsKey(nameAtr.Value))
+                    {
+                        kernel.var_hash[nameAtr.Value] -= value;
+                    }
+                    else
+                    {
+                        kernel.var_hash[nameAtr.Value] = 0 - value;
+                    }
+                }
+            }
+        }
         // Обрабатываем EVENT(if).
         public void AddEventIF(XmlNode eventNode)
         {
-            string var = eventNode.Attributes["var"].Value;
-            string operation = eventNode.Attributes["operation"].Value;
-            string value = eventNode.Attributes["value"].Value;
+            int valueFirst = 0;
+            int valueSecond = 0;
+            string operation;
+            XmlAttribute varAtr = eventNode.Attributes["var"];
+            XmlAttribute varFirstAtr = eventNode.Attributes["var1"];
+            XmlAttribute varSecondAtr = eventNode.Attributes["var2"];
+            XmlAttribute operationAtr = eventNode.Attributes["operation"];
+            XmlAttribute valueAtr = eventNode.Attributes["value"];
+
+            if (varAtr != null && valueAtr != null)
+            {
+                if (kernel.var_hash.ContainsKey(varAtr.Value))
+                {
+                    valueFirst = kernel.var_hash[varAtr.Value];
+                    valueSecond = int.Parse(valueAtr.Value);
+                }
+                else
+                {
+                    m_nodeSuitable = false;
+                    return;
+                }
+            }
+            else
+            if (varFirstAtr != null && varSecondAtr != null)
+            {
+                if (kernel.var_hash.ContainsKey(varFirstAtr.Value) 
+                    && kernel.var_hash.ContainsKey(varSecondAtr.Value))
+                {
+                    valueFirst = kernel.var_hash[varFirstAtr.Value];
+                    valueSecond = kernel.var_hash[varSecondAtr.Value];
+                }
+                else
+                {
+                    m_nodeSuitable = false;
+                    return;
+                }
+            }
+
+            operation = (operationAtr != null) ? operationAtr.Value : "==";
+
+            if (operation == "==")
+            {
+                m_nodeSuitable = (valueFirst == valueSecond) ? true : false;
+                Debug.Log(valueFirst + operation + valueSecond + " - " + m_nodeSuitable);
+            }
+            else
+            if (operation == "!=")
+            {
+                m_nodeSuitable = (valueFirst != valueSecond) ? true : false;
+                Debug.Log(valueFirst + operation + valueSecond + " - " + m_nodeSuitable);
+            }
         }
         //  Обрабатываем EVENT(time).
         public void AddEventTime(XmlNode eventNode)
         {
             float time = float.Parse(eventNode.Attributes["time"].Value);
+            timer.SetTimer(time);
         }
         // Обрабатываем CHOICE.
         public void AddChoice(XmlNode choiceNode)
@@ -214,7 +396,7 @@ namespace ng
         {
             if (node != null)
             {
-                foreach (XmlNode childnode in node.ChildNodes) // Сделать отдельные классы [TO DO]
+                foreach (XmlNode childnode in node.ChildNodes)
                 {
                     //ResData data = DataObject.GetData(childnode);
 

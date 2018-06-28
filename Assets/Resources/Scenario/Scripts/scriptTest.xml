@@ -1,45 +1,94 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SCRIPT>
 
-  <SCENE id="scene1">
-    <SPRITE id="sprite1_1" layer ="1" src="demoScene/1"/>
-    <SPRITE id="sprite1_2" layer ="2" src="demoScene/2"/>
-    <SPRITE id="sprite1_3" layer ="3" src="demoScene/3"/>
-    <EVENT>
-      <SPRITE id="sprite1_3" layer ="2"/>
+  <!--<SCENE id="event_time">
+    <SPRITE id="sprite" src="demo/eventTime/1"/>
+    <EVENT time="4">
+      <SPRITE id="sprite" src="demo/eventTime/2"/>
+    </EVENT>
+    <EVENT time="4">
+      <SPRITE id="sprite" src="demo/eventTime/3"/>
+    </EVENT>
+    <EVENT time="4">
+      <SPRITE id="sprite" src="demo/eventTime/4"/>
     </EVENT>
     <EVENT>
-      <SPRITE id="sprite1_2" src="scene2/girl1"/>
+      <SPRITE id="sprite" src="demo/eventTime/5"/>
     </EVENT>
-    <EVENT>
-      <!--  <JUMP to="scene" id ="scene2"/> -->
-    </EVENT>
-  </SCENE>
+  </SCENE> -->
 
-  <SCENE id="scene2">
-    <SPRITE id="sprite1_1" layer ="1" src="logo/back"/>
-    <SPRITE id="sprite1_2" layer ="2" src="logo/logo"/>
-    <SPRITE id="sprite1_3" layer ="3" y ="-0.77" src="logo/name"/>
-    <EVENT>
-      <SPRITE id="sprite1_2" scale="1.1"/>
-      <TEXT id="Текст в первом event сцены 'scene2'"></TEXT>
-    </EVENT>
-  </SCENE>
+  <!-- <SCENE id="checkEventIf">
+    <SPRITE id="background" layer ="1" src="demo/menu/background"/>
+    <SPRITE id="gui" layer ="2" src="demo/menu/gui"/>
 
+    <TEXT id="Изначально var1 = 1"></TEXT>
+    <TEXT id="Изначально var2 = 2"></TEXT>
+
+    <EVENT var="var3" value="1">
+      <TEXT id="Event1"></TEXT>
+    </EVENT>
+    <EVENT var="var1" value="1">
+      <TEXT id="Event2"></TEXT>
+    </EVENT>
+    <EVENT var="var1" operation="==" value="1">
+      <TEXT id="Event3"></TEXT>
+    </EVENT>
+    <EVENT var="var1" operation="!=" value="1">
+      <TEXT id="Event4"></TEXT>
+    </EVENT>
+    <EVENT var="var1" value="1">
+      <TEXT id="Event5"></TEXT>
+    </EVENT>
+    <EVENT var1="var1" operation="==" var2="var2">
+      <TEXT id="Event6"></TEXT>
+    </EVENT>
+    <EVENT var1="var1" operation="==" var2="var4">
+      <TEXT id="Event7"></TEXT>
+    </EVENT>
+    <EVENT var1="var1" operation="!=" var2="var2">
+      <TEXT id="Event8"></TEXT>
+    </EVENT>
+  </SCENE> -->
+
+  <!--<SCENE id="testVars">
+    <SPRITE id="testbackground" layer ="1" src="demo/test"/>
+    <VAR name="var3" value="10"/>
+    <VAR name="var16" value="11"/>
+    <VAR name="var16" operation="+" value="11"/>
+    <VAR name="var14" value="17"/>
+    <EVENT>
+      <VAR name="var2" value="2"/>
+    </EVENT>
+    <EVENT>
+      <VAR name="var3" operation="+" value="5"/>
+    </EVENT>
+    <EVENT>
+      <VAR name="var3" operation="-" value="3"/>
+    </EVENT>
+    <EVENT>
+      <VAR name="var4" value="3"/>
+    </EVENT>
+    <EVENT>
+      <VAR name="var5" var="var2"/>
+    </EVENT>
+  </SCENE>-->
+
+  <SCENE id="test">
+    <SPRITE id="testbackground" layer ="1" src="demo/test"/>
+  </SCENE>
+  
   <SCENE id="scene3">
-    <SPRITE id="sprite1_1" layer ="1" src="scene2/back"/>
-    <SPRITE id="sprite1_2" layer ="2" x="2.36" y="-0.73" src="scene2/girl1"/>
-    <EVENT> <!-- EVENT должен быть после прогрузок. Всегда! -->
-      <SPRITE id="sprite1_2" src="scene2/girl2"/>
-      <TEXT id="Текст в первом event сцены 'scene3'"></TEXT>
-      <TEXT id="Второй текст в первом event сцены 'scene3'"></TEXT>
+    <SPRITE id="1" layer ="1" src="demo/scene_1/1"/>
+    <SPRITE id="2" layer ="2" scale="0.9" src="demo/scene_1/2"/>
+    <SPRITE id="3" layer ="3" scale="0.8" src="demo/scene_1/3"/>
+    <EVENT>
+      <SPRITE id="1" scale="1.5"/>
     </EVENT>
     <EVENT>
-      <TEXT id="Текст во втором event сцены 'scene3'"></TEXT>
+      <SPRITE id="2" scale="1.5"/>
     </EVENT>
     <EVENT>
-      <SPRITE id="sprite1_2" src="scene2/girl1"/>
-      <TEXT id="Текст в третьем event сцены 'scene3'"></TEXT>
+      <SPRITE id="3" scale="1.5"/>
     </EVENT>
   </SCENE>
   

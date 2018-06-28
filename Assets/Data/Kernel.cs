@@ -27,11 +27,19 @@ namespace ng
         // Переменные полос.
         private Band m_bandLT;
         private Band m_bandRB;
-        // Хэш-словарь.
-        public Dictionary<string, string> objects;
+        // Хэш-словарь переменных.
+        public Dictionary<string, int> var_hash;
+
+        private void Awake()
+        {
+            // Спросить у Яна насчёт Awake и Start, где лучше "дообьявлять переменные"
+            //var_hash = new Dictionary<string, int>();
+        }
 
         void Start ()
         {
+            var_hash = new Dictionary<string, int>();
+
             cameraObject.GetComponent<Camera>().backgroundColor = backgroundColor;
             GetComponent<CXmlLoader>().ReadXMLFile("scriptTest");
 
