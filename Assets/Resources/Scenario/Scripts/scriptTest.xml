@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <SCRIPT>
 
-  <!--<SCENE id="event_time">
+  <SCENE id="event_time">
     <SPRITE id="sprite" src="demo/eventTime/1"/>
     <EVENT time="4">
       <SPRITE id="sprite" src="demo/eventTime/2"/>
@@ -15,7 +15,7 @@
     <EVENT>
       <SPRITE id="sprite" src="demo/eventTime/5"/>
     </EVENT>
-  </SCENE> -->
+  </SCENE>
 
   <!-- <SCENE id="checkEventIf">
     <SPRITE id="background" layer ="1" src="demo/menu/background"/>

@@ -155,10 +155,10 @@ namespace ng
             if (m_eventIfSuitable)
             {
                 // Обновим пакет объектов, возможно, что нужные CHOICE объекты в этом EVENT.
-                if (m_currentNode.Name == "EVENT")
-                {
+                //if (m_currentNode.Name == "EVENT")
+                //{
                     LoadNode(m_currentNode); // Загружает содержимое целых два раза. Ну нафиг. TO DO
-                }
+                //}
                 // Проверка ноды на наличие тэга VAR.
                 bool boolVar = SearchVar();
                 if (boolVar)
