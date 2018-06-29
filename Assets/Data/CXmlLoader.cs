@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 namespace ng
 {
@@ -14,8 +15,22 @@ namespace ng
         private XmlElement m_xmlRoot;
         TimerPrefabScript timer;
         Kernel kernel;
+        // Id выбранного объекта. 
+        public string nameChoiceSelected;
+        // Объект выбран
+        public bool isObjectSelected;
+        // Эта нода с Choice.
+        private bool m_nodeChoice;
         // Подходит ли нода для загрузки.
-        private bool m_nodeSuitable;
+        //private bool m_nodeSuitable;
+        // Пропустить ли загрузку сцены с обработкой логики.
+        private bool m_onlyLogicLoadinge;
+        // EVENT IF выполняется положительно.
+        private bool m_eventIfSuitable;
+
+        // Словарь с объектами выделения
+        Dictionary<string, ObjectScript> selectionObject;
+
         //Загрузка и настройка xml файла.
         public void ReadXMLFile(string nameFile)
         {
@@ -27,20 +42,29 @@ namespace ng
             m_xmlDoc = new XmlDocument();
             m_xmlDoc.Load(reader);
             m_xmlRoot = m_xmlDoc.DocumentElement;
-            m_nodeSuitable = true;
+
+            m_onlyLogicLoadinge = false;
+            //m_nodeSuitable = true;
+            m_nodeChoice = false;
+            isObjectSelected = false;
+            nameChoiceSelected = null;
+            m_eventIfSuitable = true;
 
             m_currentNode = m_xmlRoot.FirstChild;   // Быстрая логика.
             UpdateScene();                          // Обновление сцены.
             CheckBlock();
         }
-        public void Start()
+        public void Awake()
         {
             timer = GameObject.Find("NGTimer").GetComponent<TimerPrefabScript>();
             kernel = GameObject.Find("NGGame").GetComponent<Kernel>();
+
+            selectionObject = new Dictionary<string, ObjectScript>();
         }
         // Главное обновление.
         public void Update()
         {
+            //Debug.Log("m_onlyLogicLoadinge: " + m_onlyLogicLoadinge + " m_nodeChoice: " + m_nodeChoice);
             EventController();
         }
         // Обновление сцены.
@@ -75,7 +99,6 @@ namespace ng
         // Логика переходов по сценарию.
         public void LogicTransitions()
         {
-            m_nodeSuitable = true;
             if (m_currentNode != null)
             {
                 if (m_currentNode.SelectSingleNode("EVENT") != null)         
@@ -105,58 +128,88 @@ namespace ng
                         }
                     }
                 }
-                CheckBlock();
+                if (m_currentNode != null)
+                {
+                    CheckBlock();
+                }
             }
         }
 
         // Блок проверок на необычные ТЭГИ.
         public void CheckBlock()
         {
-            // Проверка ноды на наличие тэга VAR.
-            bool boolVar = SearchVar();
-            if (boolVar)
-            {
-                // Добавляем все существующие VAR-ы.
-                AddVars(m_currentNode);
-            }
-            // Проверка ноды на наличие тэга JUMP.
-            bool boolJump = SearchJump();
-            if (boolJump)
-            {
-                AddJump(m_currentNode.SelectSingleNode("JUMP"));
-            }
-            // Проверка ноды на наличие тэга CHOICE.
-            bool choiceJump = SearchChoice();
-            if (choiceJump)
-            {
-                AddChoice(m_currentNode.SelectSingleNode("CHOICE"));
-            }
+            m_nodeChoice = false;
+            m_onlyLogicLoadinge = false;
+            isObjectSelected = false;
+            // Обнуляем Id объекта заселекченного в прошлый раз. // Перенести в resetChoice. TO DO
+            nameChoiceSelected = null;
+            m_eventIfSuitable = true;
+
             // Проверка и установка IF расширения на EVENT.
             bool boolEventIf = IsEventIF(m_currentNode);
             if (boolEventIf)
             {
+                //Debug.Log("Тут есть IF");
                 AddEventIF(m_currentNode);
             }
-            // Проверка и установка TIME расширения на EVENT.
-            bool boolEventTime = IsEventTime(m_currentNode);
-            if (boolEventTime)
+            //Debug.Log(m_eventIfSuitable);
+            // Если EVENT IF выполняется положительно, то продолжаем обрабатывать.
+            if (m_eventIfSuitable)
             {
-                AddEventTime(m_currentNode);
+                // Обновим пакет объектов, возможно, что нужные CHOICE объекты в этом EVENT.
+                if (m_currentNode.Name == "EVENT")
+                {
+                    //Debug.Log("Загружаю содержимое дополнительно.");
+                    LoadNode(m_currentNode); // Загружает содержимое целых два раза. Ну нафиг. TO DO
+                }
+                // Проверка ноды на наличие тэга VAR.
+                bool boolVar = SearchVar();
+                if (boolVar)
+                {
+                    //Debug.Log("Я обработаю VAR");
+                    // Добавляем все существующие VAR-ы.
+                    AddVars(m_currentNode);
+                }
+                // Проверка и установка CHOICE расширения на EVENT.
+                bool boolEventChoice = SearchChoice();
+                if (boolEventChoice)
+                {
+                    //Debug.Log("Этот EVENT с CHOICE");
+                    m_onlyLogicLoadinge = true;
+                    m_nodeChoice = true;
+                    AddChoice(m_currentNode.SelectSingleNode("CHOICE"));
+                }
+                // Проверка и установка TIME расширения на EVENT.
+                bool boolEventTime = IsEventTime(m_currentNode);
+                if (boolEventTime)
+                {
+                    AddEventTime(m_currentNode);
+                }
+                // Проверка ноды на наличие тэга JUMP.
+                bool boolJump = SearchJump();
+                if (boolJump)
+                {
+                    AddJump(m_currentNode.SelectSingleNode("JUMP"));
+                }
             }
         }
 
         // Контроль логики переключений.
         public void EventController()
         {
-            // Для проверки скорости проработки скрипта - отключить условие.
-            if (OnInputEvent() == 1 || timer.status == 1 || m_nodeSuitable == false)
+            // Для проверки скорости проработки скрипта - отключить два уровня условий.
+            if ((m_nodeChoice == true && isObjectSelected == true) || (m_nodeChoice == false && isObjectSelected == false))
             {
-                if (timer.status == 1 || timer.status == 2) timer.ResetTimer();
-                LogicTransitions();
-                // Если нода подходит для загрузки - загружаем.
-                if (m_nodeSuitable == true)
+                if (OnInputEvent() == 1 || timer.status == 1 || m_onlyLogicLoadinge == true)
                 {
-                    UpdateScene();
+                    if (m_nodeChoice == true) FinishChoice(m_currentNode.SelectSingleNode("CHOICE"));
+                    if (timer.status == 1 || timer.status == 2) timer.ResetTimer();
+                    LogicTransitions();
+                    // Если нода подходит для загрузки - загружаем.
+                    if (m_onlyLogicLoadinge == false)
+                    {
+                        UpdateScene();
+                    }
                 }
             }
         }
@@ -226,10 +279,7 @@ namespace ng
         // Обрабатываем VAR-ы.
         public void AddVars(XmlNode node)
         {
-            XmlNodeList varsNodes;
-
-            varsNodes = node.SelectNodes("VAR");
-
+            XmlNodeList varsNodes = node.SelectNodes("VAR");
             foreach (XmlNode var in varsNodes)
             {
                 AddOneVar(var);
@@ -238,13 +288,23 @@ namespace ng
         // Обрабатываем один VAR.
         public void AddOneVar(XmlNode nodeVar)
         {
-            int value = 0;
+            //Debug.Log("Я обработаю VAR");
+            // Команда над переменной: "delete".
             XmlAttribute commandAtr = nodeVar.Attributes["command"];
-            XmlAttribute nameAtr = nodeVar.Attributes["name"];
+            // Название переменной, куда будет класть.
+            XmlAttribute nameAtr = nodeVar.Attributes["name"];  
+            // Операции над двумя переменными: " " - "=", "+" - "+", "-" - "-"
             XmlAttribute operationAtr = nodeVar.Attributes["operation"];
+            // Значение второго числа в операции.
             XmlAttribute valueAtr = nodeVar.Attributes["value"];
+            // Название переменной для второго числа в операции.
             XmlAttribute varAtr = nodeVar.Attributes["var"];
-
+            HandlerVar(commandAtr, nameAtr, operationAtr, valueAtr, varAtr);
+        }
+        // Обработчик переменных.
+        public void HandlerVar(XmlAttribute commandAtr, XmlAttribute nameAtr, XmlAttribute operationAtr, XmlAttribute valueAtr, XmlAttribute varAtr)
+        {
+            int value = 0;
             if (commandAtr != null && nameAtr != null)
             {
                 if (commandAtr.Value == "delete")
@@ -253,7 +313,6 @@ namespace ng
                     return;
                 }
             }
-
             if (valueAtr != null)
             {
                 value = int.Parse(valueAtr.Value);
@@ -267,7 +326,6 @@ namespace ng
                 }
                 else return;
             }
-
             if (nameAtr != null)
             {
                 if (operationAtr == null)
@@ -311,7 +369,6 @@ namespace ng
             XmlAttribute varSecondAtr = eventNode.Attributes["var2"];
             XmlAttribute operationAtr = eventNode.Attributes["operation"];
             XmlAttribute valueAtr = eventNode.Attributes["value"];
-
             if (varAtr != null && valueAtr != null)
             {
                 if (kernel.var_hash.ContainsKey(varAtr.Value))
@@ -321,7 +378,8 @@ namespace ng
                 }
                 else
                 {
-                    m_nodeSuitable = false;
+                    m_onlyLogicLoadinge = true;
+                    m_eventIfSuitable = false;
                     return;
                 }
             }
@@ -336,35 +394,91 @@ namespace ng
                 }
                 else
                 {
-                    m_nodeSuitable = false;
+                    m_onlyLogicLoadinge = true;
+                    m_eventIfSuitable = false;
                     return;
                 }
             }
-
             operation = (operationAtr != null) ? operationAtr.Value : "==";
-
             if (operation == "==")
             {
-                m_nodeSuitable = (valueFirst == valueSecond) ? true : false;
-                Debug.Log(valueFirst + operation + valueSecond + " - " + m_nodeSuitable);
+                if (valueFirst == valueSecond)
+                {
+                    m_onlyLogicLoadinge = false;
+                }
+                else
+                {
+                    m_onlyLogicLoadinge = true;
+                    m_eventIfSuitable = false;
+                }
             }
             else
             if (operation == "!=")
             {
-                m_nodeSuitable = (valueFirst != valueSecond) ? true : false;
-                Debug.Log(valueFirst + operation + valueSecond + " - " + m_nodeSuitable);
+                if (valueFirst != valueSecond)
+                {
+                    m_onlyLogicLoadinge = false;
+                }
+                else
+                {
+                    m_onlyLogicLoadinge = true;
+                    m_eventIfSuitable = false;
+                }
             }
         }
         //  Обрабатываем EVENT(time).
         public void AddEventTime(XmlNode eventNode)
         {
-            float time = float.Parse(eventNode.Attributes["time"].Value);
-            timer.SetTimer(time);
+            if (!m_nodeChoice)
+            {
+                float time = float.Parse(eventNode.Attributes["time"].Value);
+                timer.SetTimer(time);
+            }
         }
         // Обрабатываем CHOICE.
         public void AddChoice(XmlNode choiceNode)
         {
+            //Debug.Log("Устанавливаю CHOICE");
+            ObjectScript objectScript;
+            XmlAttribute id;
+            foreach (XmlNode node in choiceNode.SelectNodes("SELECTION"))
+            {
+                id = node.Attributes["id"];
+                if (id != null)
+                {
+                    objectScript = GameObject.Find(id.Value).GetComponent<ObjectScript>();
+                    if (objectScript != null)
+                    {
+                        objectScript.SetSelectable();
+                        selectionObject[id.Value] = objectScript;
+                    }
+                }
+            }
+        }
+        public void FinishChoice(XmlNode choiceNode)
+        {
+            // Название переменной, куда будет класть.
+            XmlAttribute nameAtr = choiceNode.Attributes["var"];
+            // Выбранный после CHOICE объект.
+            XmlNode selectionNode = choiceNode.SelectSingleNode("SELECTION[@id = '" + nameChoiceSelected + "']");
+            // Операции над двумя переменными: " " - "=", "+" - "+", "-" - "-"
+            XmlAttribute operationAtr = selectionNode.Attributes["operation"];
+            // Значение второго числа в операции.
+            XmlAttribute valueAtr = selectionNode.Attributes["value"];
+            // Название переменной для второго числа в операции.
+            XmlAttribute varAtr = selectionNode.Attributes["var2"];
+            HandlerVar(null, nameAtr, operationAtr, valueAtr, varAtr);
 
+            foreach (var os in selectionObject)
+            {
+                os.Value.ResetSelectable();
+            }
+            selectionObject = new Dictionary<string, ObjectScript>();
+
+            //foreach (var hash in kernel.var_hash)
+            //{
+            //    Debug.Log("int " + hash.Key + " = " + hash.Value);
+            //}
         }
         // Обрабатываем JUMP.
         public void AddJump(XmlNode jumpNode)
@@ -396,25 +510,29 @@ namespace ng
         {
             if (node != null)
             {
+                XmlRootAttribute xRoot;
+                XmlSerializer formatter;
+                XmlData xmlData;
+                Data data;
                 foreach (XmlNode childnode in node.ChildNodes)
                 {
-                    //ResData data = DataObject.GetData(childnode);
-
-                    XmlRootAttribute xRoot = new XmlRootAttribute
+                    // Блок сериализации.
+                    xRoot = new XmlRootAttribute
                     {
                         ElementName = childnode.Name,
                         IsNullable = true
                     };
-                    XmlSerializer formatter = new XmlSerializer(typeof(XmlData), xRoot);
-                    XmlData xmlData = (XmlData)formatter.Deserialize(new XmlNodeReader(childnode));
-                    Data data = new Data(xmlData);
+                    formatter = new XmlSerializer(typeof(XmlData), xRoot);
+                    xmlData = (XmlData)formatter.Deserialize(new XmlNodeReader(childnode));
+                    data = new Data(xmlData, kernel);
 
+                    // Блок перебора текущего тэга.
                     switch (childnode.Name)
                     {
                         case "SPRITE":
                             if (m_scene.objects.ContainsKey(data.id))
                             {
-                                Debug.Log("Изменяем SPRITE");
+                                Debug.Log("Изменяем SPRITE " + data.id);
                                 m_scene.EditObject(data);
                             }
                             else

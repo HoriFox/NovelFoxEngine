@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224743359249381394}
   - component: {fileID: 212524111804973176}
-  - component: {fileID: 114677360054685396}
+  - component: {fileID: 114619624838418214}
   - component: {fileID: 61001810744528366}
   m_Layer: 0
   m_Name: spritePrefab
@@ -50,11 +50,11 @@ BoxCollider2D:
     adaptiveTilingThreshold: 0
     drawMode: 0
     adaptiveTiling: 0
-  m_AutoTiling: 1
+  m_AutoTiling: 0
   serializedVersion: 2
   m_Size: {x: 0.0001, y: 0.0001}
   m_EdgeRadius: 0
---- !u!114 &114677360054685396
+--- !u!114 &114619624838418214
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d32685a42c0f4af48a0279acccd391be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseOnObject: 0
+  isSelectable: 0
 --- !u!212 &212524111804973176
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -79,6 +79,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

@@ -61,6 +61,14 @@ namespace ng
             m_bandRB.UpdateBand("rightbottom", devRect);
         }
 
+        // Коэффициент разрешение конечного игрока к разработчику.
+        public Vector2 WindowsCoefficient()
+        {
+            float XCoef = Screen.width / devRect.x;
+            float YCoef = Screen.height / devRect.y;
+            return new Vector2(XCoef, YCoef);
+        }
+
         void Update()
         {
             // Боюсь, что такие штуки только ухудшат быстро действие. [TO DO]

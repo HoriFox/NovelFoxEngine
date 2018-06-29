@@ -73,23 +73,72 @@
     </EVENT>
   </SCENE>-->
 
-  <SCENE id="test">
-    <SPRITE id="testbackground" layer ="1" src="demo/test"/>
+  <!--<SCENE id="test">
+    <SPRITE id="testbackground" layer ="1" src="demo/test/test2"/>
+    <SPRITE id="testLayer" layer ="1" src="demo/test/testLayer"/>
+    <SPRITE id="yes" layer ="2" x="-600" y="-190" src="demo/test/yes"/>
+    <SPRITE id="no" layer ="3" x="-600" y="-340" src="demo/test/no"/>
+    <VAR name="var14" value="1"/>
+    <EVENT>
+      <CHOICE var="var34">
+        <SELECTION id="yes" value="1"/>
+        <SELECTION id="no" value="0"/>
+      </CHOICE>
+    </EVENT>
+    <EVENT>
+      <CHOICE var="var36">
+        <SELECTION id="yes" value="1"/>
+        <SELECTION id="no" value="0"/>
+      </CHOICE>
+    </EVENT>
+    <EVENT>
+      <CHOICE var="var14">
+        <SELECTION id="yes" value="1"/>
+        <SELECTION id="no" operation="+" var2="var36"/>
+      </CHOICE>
+    </EVENT>
+  </SCENE>-->
+
+  <SCENE id="testDialog">
+    <SPRITE id="1" layer ="1" src="demo/testDialog/хорошееНастроениеВопрос"/>
+    <SPRITE id="yes" layer ="2" x="-600" y="-190" src="demo/testDialog/yes"/>
+    <SPRITE id="no" layer ="3" x="-600" y="-340" src="demo/testDialog/no"/>
+
+    <CHOICE var="question1">
+      <SELECTION id="yes" value="1"/>
+      <SELECTION id="no" value="0"/>
+    </CHOICE>
+    
+    <EVENT id="goodFinal" var="question1" operation="==" value="1">
+      <SPRITE id="1" src="demo/testDialog/хорошийФинал"/>
+      <SPRITE id="yes" visible="false"/>
+      <SPRITE id="no" visible="false"/>
+    </EVENT>
+    <EVENT var="question1" operation="==" value="1">
+      <JUMP to="scene" id="scene1"/>
+    </EVENT>
+    <EVENT var="question1" operation="==" value="0">
+      <SPRITE id="1" src="demo/testDialog/всёНастолькоПлохоВопрос"/>
+      <CHOICE var="question2">
+        <SELECTION id="yes" value="1"/>
+        <SELECTION id="no" value="0"/>
+      </CHOICE>
+    </EVENT>
+    <EVENT var="question2" value="1">
+      <SPRITE id="1" src="demo/testDialog/неГрусти"/>
+      <SPRITE id="yes" visible="false"/>
+      <SPRITE id="no" visible="false"/>
+    </EVENT>
+    <EVENT var="question2" value="0">
+      <VAR name="question1" value="1"/>
+      <JUMP to="event" id="goodFinal"/>
+    </EVENT>
   </SCENE>
-  
-  <SCENE id="scene3">
-    <SPRITE id="1" layer ="1" src="demo/scene_1/1"/>
-    <SPRITE id="2" layer ="2" scale="0.9" src="demo/scene_1/2"/>
-    <SPRITE id="3" layer ="3" scale="0.8" src="demo/scene_1/3"/>
-    <EVENT>
-      <SPRITE id="1" scale="1.5"/>
-    </EVENT>
-    <EVENT>
-      <SPRITE id="2" scale="1.5"/>
-    </EVENT>
-    <EVENT>
-      <SPRITE id="3" scale="1.5"/>
-    </EVENT>
+
+  <SCENE id="scene1">
+    <SPRITE id="1" layer ="1" src="demo/scene1/1"/>
+    <SPRITE id="2" layer ="2" src="demo/scene1/2"/>
+    <SPRITE id="3" layer ="3" src="demo/scene1/3"/>
   </SCENE>
   
   <SCENE id="scene4">

@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 224568517490138862}
   - component: {fileID: 212490041273800450}
+  - component: {fileID: 114740373411394416}
   m_Layer: 0
   m_Name: animateSpritePrefab
   m_TagString: Untagged
@@ -27,6 +28,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &114740373411394416
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1783736930752230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d32685a42c0f4af48a0279acccd391be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isSelectable: 0
 --- !u!212 &212490041273800450
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -40,6 +53,7 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:

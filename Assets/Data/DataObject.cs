@@ -69,6 +69,11 @@ namespace ng
 
     public class Data
     {
+        public static bool GetBit(uint x, int pos)
+        {
+            return (((x) & (1 << (pos))) != 0);
+        }
+
         public static bool Convtrue(string str)
         {
             return (string.Compare(str, "true", true) == 0 ? true : false);
@@ -99,7 +104,7 @@ namespace ng
         public string command;
         public uint bitMask;
 
-        public Data(XmlData xmld)
+        public Data(XmlData xmld, Kernel kernel)
         {
             if (xmld.Delay != null)
             {
@@ -109,7 +114,7 @@ namespace ng
             else delay = 40;
             if (xmld.Layer != null)
             {
-                layer = int.Parse(xmld.Layer) * Constants.LayerDivision;
+                layer = (int.Parse(xmld.Layer) + 16)* Constants.LayerDivision;
                 bitMask = bitMask | (1 << (int)OA.layer);
             }
             else layer = 0;
@@ -241,14 +246,6 @@ namespace ng
                 bitMask = bitMask | (1 << (int)OA.command);
             }
             else command = "null";
-        }
-    }
-
-    public class DataObject : MonoBehaviour
-    {
-        public static bool GetBit(uint x, int pos)
-        {
-            return (((x) & (1 << (pos))) != 0);
         }
     }
 }
