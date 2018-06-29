@@ -14,8 +14,8 @@ namespace ng
         public void ChangeMatchMode()
         {
             ratioRef = kernel.devRect.x / kernel.devRect.y;
-            //ratio = (float)Screen.width / (float)Screen.height;
-            canvas.matchWidthOrHeight = ((float)Screen.width * (1 / ratioRef) <= Screen.height) ? 0f : 1f; // Странный способ. TO DO
+            // Проверка соотношения и установка нужной ориентации.
+            canvas.matchWidthOrHeight = ((float)Screen.width * (1 / ratioRef) <= Screen.height) ? 0f : 1f;
         }
         private void Awake()
         {

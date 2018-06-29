@@ -106,6 +106,7 @@ namespace ng
 
         public Data(XmlData xmld, Kernel kernel)
         {
+            // Уж простите, но тут не до соглашения написания кода. Лучше это не трогать.
             if (xmld.Delay != null)
             {
                 delay = int.Parse(xmld.Delay);

@@ -71,7 +71,6 @@ namespace ng
 
         void Update()
         {
-            // Боюсь, что такие штуки только ухудшат быстро действие. [TO DO]
             m_nowScreen = new Vector2(Screen.width, Screen.height);
             if (m_lastScreen != m_nowScreen)
             {

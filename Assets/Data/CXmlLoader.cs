@@ -21,8 +21,6 @@ namespace ng
         public bool isObjectSelected;
         // Эта нода с Choice.
         private bool m_nodeChoice;
-        // Подходит ли нода для загрузки.
-        //private bool m_nodeSuitable;
         // Пропустить ли загрузку сцены с обработкой логики.
         private bool m_onlyLogicLoadinge;
         // EVENT IF выполняется положительно.
@@ -44,7 +42,6 @@ namespace ng
             m_xmlRoot = m_xmlDoc.DocumentElement;
 
             m_onlyLogicLoadinge = false;
-            //m_nodeSuitable = true;
             m_nodeChoice = false;
             isObjectSelected = false;
             nameChoiceSelected = null;
@@ -64,7 +61,6 @@ namespace ng
         // Главное обновление.
         public void Update()
         {
-            //Debug.Log("m_onlyLogicLoadinge: " + m_onlyLogicLoadinge + " m_nodeChoice: " + m_nodeChoice);
             EventController();
         }
         // Обновление сцены.
@@ -134,39 +130,39 @@ namespace ng
                 }
             }
         }
-
-        // Блок проверок на необычные ТЭГИ.
-        public void CheckBlock()
+        // Устанавливаем на изначальные положения триггеры.
+        public void ResetCheckBlock()
         {
             m_nodeChoice = false;
             m_onlyLogicLoadinge = false;
             isObjectSelected = false;
-            // Обнуляем Id объекта заселекченного в прошлый раз. // Перенести в resetChoice. TO DO
+            // Обнуляем Id объекта заселекченного в прошлый раз.
             nameChoiceSelected = null;
             m_eventIfSuitable = true;
+        }
+        // Блок проверок на необычные ТЭГИ.
+        public void CheckBlock()
+        {
+            ResetCheckBlock();
 
             // Проверка и установка IF расширения на EVENT.
             bool boolEventIf = IsEventIF(m_currentNode);
             if (boolEventIf)
             {
-                //Debug.Log("Тут есть IF");
                 AddEventIF(m_currentNode);
             }
-            //Debug.Log(m_eventIfSuitable);
             // Если EVENT IF выполняется положительно, то продолжаем обрабатывать.
             if (m_eventIfSuitable)
             {
                 // Обновим пакет объектов, возможно, что нужные CHOICE объекты в этом EVENT.
                 if (m_currentNode.Name == "EVENT")
                 {
-                    //Debug.Log("Загружаю содержимое дополнительно.");
                     LoadNode(m_currentNode); // Загружает содержимое целых два раза. Ну нафиг. TO DO
                 }
                 // Проверка ноды на наличие тэга VAR.
                 bool boolVar = SearchVar();
                 if (boolVar)
                 {
-                    //Debug.Log("Я обработаю VAR");
                     // Добавляем все существующие VAR-ы.
                     AddVars(m_currentNode);
                 }
@@ -174,7 +170,6 @@ namespace ng
                 bool boolEventChoice = SearchChoice();
                 if (boolEventChoice)
                 {
-                    //Debug.Log("Этот EVENT с CHOICE");
                     m_onlyLogicLoadinge = true;
                     m_nodeChoice = true;
                     AddChoice(m_currentNode.SelectSingleNode("CHOICE"));
@@ -193,7 +188,6 @@ namespace ng
                 }
             }
         }
-
         // Контроль логики переключений.
         public void EventController()
         {
@@ -213,7 +207,7 @@ namespace ng
                 }
             }
         }
-        // Воздействия со стороны пользователя. Убрать Key, если нагрузка! [TO DO] 
+        // Воздействия со стороны пользователя. 
         public int OnInputEvent()
         { 
             if (Input.GetKeyDown(KeyCode.Mouse0) || Input.GetKeyDown(KeyCode.Return) 
@@ -438,7 +432,6 @@ namespace ng
         // Обрабатываем CHOICE.
         public void AddChoice(XmlNode choiceNode)
         {
-            //Debug.Log("Устанавливаю CHOICE");
             ObjectScript objectScript;
             XmlAttribute id;
             foreach (XmlNode node in choiceNode.SelectNodes("SELECTION"))
@@ -474,11 +467,6 @@ namespace ng
                 os.Value.ResetSelectable();
             }
             selectionObject = new Dictionary<string, ObjectScript>();
-
-            //foreach (var hash in kernel.var_hash)
-            //{
-            //    Debug.Log("int " + hash.Key + " = " + hash.Value);
-            //}
         }
         // Обрабатываем JUMP.
         public void AddJump(XmlNode jumpNode)
