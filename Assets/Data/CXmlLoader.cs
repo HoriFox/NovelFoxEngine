@@ -15,9 +15,11 @@ namespace ng
         private XmlElement m_xmlRoot;
         TimerPrefabScript timer;
         Kernel kernel;
-        // Id выбранного объекта. 
+        // Id выбранного объекта.
+        [HideInInspector]
         public string nameChoiceSelected;
-        // Объект выбран
+        // Объект выбран.
+        [HideInInspector]
         public bool isObjectSelected;
         // Эта нода с Choice.
         private bool m_nodeChoice;
@@ -77,6 +79,7 @@ namespace ng
         {
             if (m_currentNode.Name == "SCENE")
             {
+                Debug.Log("Очистка");
                 m_scene = new Scene();
                 m_canvastr = sceneParent.GetComponentInChildren<Canvas>().gameObject.transform;
                 foreach (Transform t in m_canvastr)
@@ -93,7 +96,7 @@ namespace ng
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         // Логика переходов по сценарию.
-        public void LogicTransitions()
+        public void LogicTransitions()          //Лучше объяснить каждый шаг.
         {
             if (m_currentNode != null)
             {
@@ -144,6 +147,8 @@ namespace ng
         public void CheckBlock()
         {
             ResetCheckBlock();
+
+            // Ошибка. Пролетает и не релоадит некоторые сцены ибо пытается найти checkBlock в обычном scene. Делать проверку на EVent
 
             // Проверка и установка IF расширения на EVENT.
             bool boolEventIf = IsEventIF(m_currentNode);
@@ -251,8 +256,8 @@ namespace ng
         {
             if (eventNode != null)
             {
-                return ((eventNode.Attributes["var"] != null  && eventNode.Attributes["value"] != null)
-                    || (eventNode.Attributes["var1"] != null && eventNode.Attributes["var2"] != null));
+                return (m_currentNode.Name == "EVENT" && ((eventNode.Attributes["var"] != null  && eventNode.Attributes["value"] != null)
+                    || (eventNode.Attributes["var1"] != null && eventNode.Attributes["var2"] != null)));
             }
             return false;
         }
@@ -282,7 +287,6 @@ namespace ng
         // Обрабатываем один VAR.
         public void AddOneVar(XmlNode nodeVar)
         {
-            //Debug.Log("Я обработаю VAR");
             // Команда над переменной: "delete".
             XmlAttribute commandAtr = nodeVar.Attributes["command"];
             // Название переменной, куда будет класть.

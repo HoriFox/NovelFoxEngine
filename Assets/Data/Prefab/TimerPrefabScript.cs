@@ -8,6 +8,7 @@ public class TimerPrefabScript : MonoBehaviour {
     // 0 - не установлен
     // 1 - завершен
     // 2 - в процессе
+    [HideInInspector]
     public int status = 0;
 
     IEnumerator WaitTimer(float time)

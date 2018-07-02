@@ -19,6 +19,8 @@ namespace ng
     [Serializable]
     public class XmlData
     {
+        //[XmlAttribute("delay", DataType = "int")] // Можно парсить в нужный тип.
+
         [XmlAttribute("delay")]                                                     // Параметр задержки		    0
         public string Delay { get; set; }
         [XmlAttribute("layer")]                                                     // Слой отображения		        1

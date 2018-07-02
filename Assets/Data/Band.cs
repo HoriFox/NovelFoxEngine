@@ -27,11 +27,11 @@ public class Band : MonoBehaviour {
 
             if (place == "lefttop")
             {
-                rt.localPosition = new Vector3(0, (devRect.y / 2.0f) + (sizeY / 2.0f), 100f);
+                rt.localPosition = new Vector2(0, (devRect.y / 2.0f) + (sizeY / 2.0f));
             }
             if (place == "rightbottom")
             {
-                rt.localPosition = new Vector3(0, -((devRect.y / 2.0f) + (sizeY / 2.0f)), 100f);
+                rt.localPosition = new Vector2(0, -((devRect.y / 2.0f) + (sizeY / 2.0f)));
             }
         }
         else if (ratio >= ratioRef)
@@ -43,11 +43,11 @@ public class Band : MonoBehaviour {
 
             if (place == "lefttop")
             {
-                rt.localPosition = new Vector3((devRect.x / 2.0f) + (sizeX / 2.0f), 0f, 100f);
+                rt.localPosition = new Vector2((devRect.x / 2.0f) + (sizeX / 2.0f), 0);
             }
             if (place == "rightbottom")
             {
-                rt.localPosition = new Vector3(-((devRect.x / 2.0f) + (sizeX / 2.0f)), 0f, 100f);
+                rt.localPosition = new Vector2(-((devRect.x / 2.0f) + (sizeX / 2.0f)), 0);
             }
         }
     }
